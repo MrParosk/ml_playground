@@ -1,1 +1,1 @@
-# ml_playground
+# Machine learning playgroundContaining smaller machine learning projects.

@@ -1,0 +1,1 @@
+# PneumoniaClassifying pneumonia based on X-ray images. The data can be downloaded [here](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia).
