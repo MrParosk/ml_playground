@@ -1,0 +1,1 @@
+# Understanding the Amazon from SpaceClassifying satellite images of the Amazon rainforest. Note that this is a multi-class problem, i.e. there may be multiple classes within each image. The data can be downloaded [here](https://www.kaggle.com/c/planet-understanding-the-amazon-from-space).
