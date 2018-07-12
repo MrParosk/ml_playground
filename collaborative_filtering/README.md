@@ -1,0 +1,1 @@
+# Collaborative filteringCollaborative filtering using pytorch. The data can be downloaded [here](http://files.grouplens.org/datasets/movielens/ml-latest-small.zip).
