@@ -1,0 +1,1 @@
+# Text synthesisSynthesizing text (Nietzsche). The data can be downloaded [here](https://s3.amazonaws.com/text-datasets/nietzsche.txt).
