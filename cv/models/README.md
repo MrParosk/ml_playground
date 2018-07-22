@@ -1,0 +1,1 @@
+# CNN modelsImplementation of common state of art CNN models. They are tested on the MNIST data set, which can be downloaded [here](https://www.kaggle.com/c/digit-recognizer).
