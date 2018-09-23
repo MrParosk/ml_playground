@@ -9,7 +9,7 @@ def read_img(img_str: str, target_size: int) -> np.ndarray:
     return img
 
 
-def draw_boxes(img: str, boxes:list) -> np.ndarray:
+def draw_boxes(img: str, boxes: list) -> np.ndarray:
     for i in range(len(boxes)):
         cv2.rectangle(img, (boxes[i][0], boxes[i][1]),
                       (boxes[i][0] + boxes[i][2], boxes[i][1] + boxes[i][3]), (0, 0, 255), 2)
@@ -27,7 +27,7 @@ def draw_grid(img: str, pixel_step: int) -> np.ndarray:
 
     while y < img.shape[0]:
         cv2.line(img, (0, y), (img.shape[1], y), color=(255, 255, 255))
-        y += pixel_step   
+        y += pixel_step
 
     return img
 

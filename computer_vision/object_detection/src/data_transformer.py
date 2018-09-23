@@ -18,7 +18,7 @@ def load_pascal(json_path: str) -> (dict, list):
 
     df_cats = pd.DataFrame(id_cat, columns=["category_id", "name"])
 
-    id_cat = {value-1:key for (value, key) in id_cat}
+    id_cat = {value-1: key for (value, key) in id_cat}
 
     df_filename = pd.DataFrame(json_data["images"])
     df_filename.columns = ["file_name", "height", "image_id", "width"]
@@ -37,7 +37,7 @@ def load_pascal(json_path: str) -> (dict, list):
         val = [name, group["width"].values[0], group["height"].values[0], list(group["name"].values),
                list(group["bbox"].values), list(group["category_id"].values - 1)]
         grouped_data.append(val)
- 
+
     return (id_cat, grouped_data)
 
 
