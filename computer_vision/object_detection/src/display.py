@@ -10,9 +10,10 @@ def read_img(img_str: str, target_size: int) -> np.ndarray:
 
 
 def draw_boxes(img: str, boxes: list) -> np.ndarray:
-    for i in range(len(boxes)):
-        cv2.rectangle(img, (boxes[i][0], boxes[i][1]),
-                      (boxes[i][0] + boxes[i][2], boxes[i][1] + boxes[i][3]), (0, 0, 255), 2)
+    for box in boxes:
+        cv2.rectangle(img, (int(box[0] - box[2]/2), int(box[1] - box[3]/2)),
+                      (int(box[0] + box[2]/2), int(box[1] + box[3]/2)),
+                      (0, 0, 255), 2)
 
     return img
 
@@ -32,7 +33,8 @@ def draw_grid(img: str, pixel_step: int) -> np.ndarray:
     return img
 
 
-def draw_text(img: str, texts: list, locations: list):
+def draw_text(img: str, texts: list, locations: list) -> np.ndarray:
     for text, loc in zip(texts, locations):
-        cv2.putText(img, text, (loc[0], loc[1]), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255,0,0), 1)
+        cv2.putText(img, text, (int(loc[0]), int(loc[1])), cv2.FONT_HERSHEY_COMPLEX,
+                    0.5, (255, 0, 0), 1)
     return img

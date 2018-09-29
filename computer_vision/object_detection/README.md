@@ -1,0 +1,1 @@
+# Object detectionImplementation of two end-to-end object detection methods: yolo (v1) and ssd. They are trained on PASCAL VOC 2012, which can be found [here](https://pjreddie.com/projects/pascal-voc-dataset-mirror/). I used the JSON annotations which can be found [here](https://storage.googleapis.com/coco-dataset/external/PASCAL_VOC.zip).

@@ -4,8 +4,8 @@ import pandas as pd
 
 def load_pascal(json_path: str) -> (dict, list):
     """ Return list is a list with each element is of the format:
-        ['2008_000050.jpg', ['car'], [[130, 117, 17, 19]], [6]]
-        [img name, [class name], [bounding boxes], [class id]]
+        ['2008_000008.jpg', 500, 442, ['horse', 'person'], [[52, 86, 419, 334], [157, 43, 132, 124]], [12, 14]].
+        [img name, width of image, height of image, [class names], [bounding boxes], [class id]].
     """
 
     json_data = json.load(open(json_path))
@@ -43,8 +43,8 @@ def load_pascal(json_path: str) -> (dict, list):
 
 def rescale_bounding_boxes(data_list: list, target_size: int) -> list:
     """ Return list is a list with each element is of the format:
-        ['2008_000008.jpg', 500, 442, ['horse', 'person'], [[52, 86, 419, 334], [157, 43, 132, 124]], [12, 14]]
-        [img name, width of image, height of image, [class names], [bounding boxes], [class id]]
+        ['2008_000050.jpg', ['car'], [6], [[130, 117, 17, 19]]].
+        [img name, [class name], [class id], [bounding boxes]].
     """
 
     for d in data_list:
@@ -69,5 +69,20 @@ def rescale_bounding_boxes(data_list: list, target_size: int) -> list:
         # removing width and height of image
         del d[2]
         del d[1]
+
+    # Re-orginize the list
+    data_list = [[d[0], d[1], d[3], d[2]] for d in data_list]
+    return data_list
+
+
+def convert_to_center(data_list: list) -> list:
+    """
+    Converting [bx, by, w, h] to [cx, cy, w, h].
+    """
+
+    for d in data_list:
+        for box in d[3]:
+            box[0] = box[0] + box[2]/2
+            box[1] = box[1] + box[3]/2
 
     return data_list
