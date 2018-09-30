@@ -3,13 +3,6 @@ def calc_iou(box_a: list, box_b: list) -> list:
     Boxes are on the format [bx, by, width, height]
     """
 
-    # Coverting boxes to (x1, y1) and (x2, y2)
-    box_a[2] = box_a[2] + box_a[0]
-    box_a[3] = box_a[3] + box_a[1]
-
-    box_b[2] = box_b[2] + box_b[0]
-    box_b[3] = box_b[3] + box_b[1]
-
     x_a = max(box_a[0], box_b[0])
     y_a = max(box_a[1], box_b[1])
     x_b = min(box_a[2], box_b[2])
@@ -26,6 +19,18 @@ def calc_iou(box_a: list, box_b: list) -> list:
     return iou
 
 
+def center_2_hw(bounding_box: list) -> list:
+    """
+    Coverting boxes to (x1, y1) and (x2, y2)
+    """
+
+    return [bounding_box[0] - bounding_box[2]/2,
+            bounding_box[1] - bounding_box[3]/2,
+            bounding_box[0] + bounding_box[2]/2,
+            bounding_box[1] + bounding_box[3]/2
+            ]
+
+
 def non_max_suppression(bounding_boxes: list, iou_threshold: float = 0.5) -> list:
     """ Boxes are on the format:
         [0.7954241, 11, 'dog', 55.436745, 23.547615, 126.517395, 196.1788]
@@ -39,9 +44,9 @@ def non_max_suppression(bounding_boxes: list, iou_threshold: float = 0.5) -> lis
         filtered_bb.append(best_bb)
 
         remove_items = []
-        for j in range(len(bounding_boxes)):
-            if calc_iou(best_bb[3:], bounding_boxes[j][3:]) > iou_threshold:
-                remove_items.append(bounding_boxes[j])
+        for bb in bounding_boxes:
+            if calc_iou(center_2_hw(best_bb[3:]), center_2_hw(bb[3:])) > iou_threshold:
+                remove_items.append(bb)
 
         bounding_boxes = [bb for bb in bounding_boxes if bb not in remove_items]
 
