@@ -1,0 +1,1 @@
+# Word2vecTraining a [word2vec](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf) model to extract word embeddings.The data can be downloaded [here](http://mattmahoney.net/dc/textdata.html) (text8.zip).
