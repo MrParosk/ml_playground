@@ -1,0 +1,1 @@
+# Semantic segmentationImplementation of X end-to-end semantic segmentation methods: - [FCN-8](https://arxiv.org/abs/1411.4038).They are trained on PASCAL VOC 2012, which can be found [here](https://pjreddie.com/projects/pascal-voc-dataset-mirror/).
