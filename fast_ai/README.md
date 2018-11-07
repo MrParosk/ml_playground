@@ -1,1 +1,0 @@
-# Deep learning for coders (2018)Notes from the fast.ai course "Deep Learning for Coders" (2018).
