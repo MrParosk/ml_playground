@@ -1,0 +1,1 @@
+# Neural style transferImplementation of neural style transfer according to the paper [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576).
