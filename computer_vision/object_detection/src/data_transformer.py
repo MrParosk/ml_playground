@@ -1,11 +1,16 @@
 import json
 import pandas as pd
+from collections import namedtuple
+
+ImageEntry = namedtuple("ImageEntry", ["filename", "width", "height",
+                                       "classnames", "class_id",
+                                       "bounding_boxes"
+                                       ])
 
 
-def load_pascal(json_path: str) -> (dict, list):
-    """ Return list is a list with each element is of the format:
-        ['2008_000008.jpg', 500, 442, ['horse', 'person'], [[52, 86, 419, 334], [157, 43, 132, 124]], [12, 14]].
-        [img name, width of image, height of image, [class names], [bounding boxes], [class id]].
+def load_pascal(json_path: str) -> (dict, tuple):
+    """
+    Loading pascal bounding boxes and converting them to named tuples.
     """
 
     json_data = json.load(open(json_path))
@@ -34,28 +39,26 @@ def load_pascal(json_path: str) -> (dict, list):
 
     grouped = df.groupby("file_name")
     for name, group in grouped:
-        val = [name, group["width"].values[0], group["height"].values[0], list(group["name"].values),
-               list(group["bbox"].values), list(group["category_id"].values - 1)]
+        val = ImageEntry(filename=name, width=group["width"].values[0], height=group["height"].values[0],
+                         classnames=list(group["name"].values), class_id=list(group["category_id"].values - 1),
+                         bounding_boxes=list(group["bbox"].values))
         grouped_data.append(val)
-
     return (id_cat, grouped_data)
 
 
 def rescale_bounding_boxes(data_list: list, target_size: int) -> list:
-    """ Return list is a list with each element is of the format:
-        ['2008_000050.jpg', ['car'], [6], [[130, 117, 17, 19]]].
-        [img name, [class name], [class id], [bounding boxes]].
+    """
+    Rescaling the bounding boxes according to the new image size (target_size).
     """
 
-    for d in data_list:
-        x_scale = target_size / d[1]
-        y_scale = target_size / d[2]
+    for i in range(len(data_list)):
+        d = data_list[i]
+        x_scale = target_size / d.width
+        y_scale = target_size / d.height
 
-        old_boxes = d[4]
         new_boxes = []
-
-        for i in range(len(old_boxes)):
-            (x, y, d_x, d_y) = old_boxes[i]
+        for box in d.bounding_boxes:
+            (x, y, d_x, d_y) = box
 
             x = int(round(x * x_scale))
             y = int(round(y * y_scale))
@@ -64,14 +67,7 @@ def rescale_bounding_boxes(data_list: list, target_size: int) -> list:
 
             new_boxes.append([x, y, d_x, d_y])
 
-        d[4] = new_boxes
-
-        # removing width and height of image
-        del d[2]
-        del d[1]
-
-    # Re-orginize the list
-    data_list = [[d[0], d[1], d[3], d[2]] for d in data_list]
+        data_list[i] = data_list[i]._replace(bounding_boxes=new_boxes)
     return data_list
 
 
@@ -80,9 +76,13 @@ def convert_to_center(data_list: list) -> list:
     Converting [bx, by, w, h] to [cx, cy, w, h].
     """
 
-    for d in data_list:
-        for box in d[3]:
-            box[0] = box[0] + box[2]/2
-            box[1] = box[1] + box[3]/2
+    for i in range(len(data_list)):
+        d = data_list[i]
 
+        new_boxes = []
+        for box in d.bounding_boxes:
+            cx = box[0] + box[2]/2
+            cy = box[1] + box[3]/2
+            new_boxes.append([cx, cy, box[2], box[3]])
+        data_list[i] = data_list[i]._replace(bounding_boxes=new_boxes)
     return data_list
