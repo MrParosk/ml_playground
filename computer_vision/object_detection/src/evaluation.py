@@ -1,42 +1,46 @@
-def calc_iou(box_a: list, box_b: list) -> list:
+from collections import namedtuple
+import torch
+
+
+PredBoundingBox = namedtuple("PredBoundingBox", ["probability", "class_id",
+                                                 "classname", "bounding_box"
+                                                 ])
+
+
+def center_2_hw(box: torch.Tensor) -> float:
     """
-    Boxes are on the format [bx, by, width, height]
-    """
-
-    x_a = max(box_a[0], box_b[0])
-    y_a = max(box_a[1], box_b[1])
-    x_b = min(box_a[2], box_b[2])
-    y_b = min(box_a[3], box_b[3])
-
-    # Compute the area of intersection
-    inter_area = max(0, x_b - x_a + 1) * max(0, y_b - y_a + 1)
-
-    # Compute the area of the prediction and ground-truth
-    box_a_area = (box_a[2] - box_a[0] + 1) * (box_a[3] - box_a[1] + 1)
-    box_b_area = (box_b[2] - box_b[0] + 1) * (box_b[3] - box_b[1] + 1)
-
-    iou = inter_area / (box_a_area + box_b_area - inter_area + 1e-8)
-    return iou
-
-
-def center_2_hw(bounding_box: list) -> list:
-    """
-    Coverting boxes to (x1, y1) and (x2, y2)
+    Converting (cx, cy, w, h) to (x1, y1, x2, y2)
     """
 
-    return [bounding_box[0] - bounding_box[2]/2,
-            bounding_box[1] - bounding_box[3]/2,
-            bounding_box[0] + bounding_box[2]/2,
-            bounding_box[1] + bounding_box[3]/2
-            ]
+    return torch.cat(
+        [box[:, 0, None] - box[:, 2, None]/2,
+         box[:, 1, None] - box[:, 3, None]/2,
+         box[:, 0, None] + box[:, 2, None]/2,
+         box[:, 1, None] + box[:, 3, None]/2
+         ], dim=1)
+
+
+def intersect(box_a: torch.Tensor, box_b: torch.Tensor) -> float:
+    # Coverting (cx, cy, w, h) to (x1, y1, x2, y2) since its easier to extract min/max coordinates
+    temp_box_a, temp_box_b = center_2_hw(box_a), center_2_hw(box_b)
+
+    max_xy = torch.min(temp_box_a[:, None, 2:], temp_box_b[None, :, 2:])
+    min_xy = torch.max(temp_box_a[:, None, :2], temp_box_b[None, :, :2])
+    inter = torch.clamp((max_xy - min_xy), min=0)
+    return inter[:, :, 0] * inter[:, :, 1]
+
+
+def box_area(box: torch.Tensor) -> float:
+    return box[:, 2] * box[:, 3]
+
+
+def jaccard(box_a: torch.Tensor, box_b: torch.Tensor) -> float:
+    intersection = intersect(box_a, box_b)
+    union = box_area(box_a).unsqueeze(1) + box_area(box_b).unsqueeze(0) - intersection
+    return intersection / union
 
 
 def non_max_suppression(bounding_boxes: list, iou_threshold: float = 0.5) -> list:
-    """ Boxes are on the format:
-        [0.7954241, 11, 'dog', 55.436745, 23.547615, 126.517395, 196.1788]
-        [confidence, class id, class name, bx, by, width, height]
-    """
-
     filtered_bb = []
 
     while len(bounding_boxes) != 0:
@@ -45,9 +49,10 @@ def non_max_suppression(bounding_boxes: list, iou_threshold: float = 0.5) -> lis
 
         remove_items = []
         for bb in bounding_boxes:
-            if calc_iou(center_2_hw(best_bb[3:]), center_2_hw(bb[3:])) > iou_threshold:
+            iou = jaccard(torch.tensor(best_bb.bounding_box).unsqueeze(0), 
+                          torch.tensor(bb.bounding_box).unsqueeze(0))
+
+            if iou > iou_threshold:
                 remove_items.append(bb)
-
         bounding_boxes = [bb for bb in bounding_boxes if bb not in remove_items]
-
     return filtered_bb
