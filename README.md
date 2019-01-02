@@ -16,7 +16,7 @@
 - Models
   - Implementing SOTA convolutional neural networks.
 - Object detection
-  - Implementing YOLO (v1) and SSD.
+  - Implementing YOLO and SSD.
 - Semantic segmentation
   - Implementing FCN-8 and U-Net.
 - Neural style transfer
