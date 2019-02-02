@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from collections import namedtuple
+import torch
 
 ImageEntry = namedtuple("ImageEntry", ["filename", "width", "height",
                                        "classnames", "class_id",
@@ -86,3 +87,15 @@ def convert_to_center(data_list: list) -> list:
             new_boxes.append([cx, cy, box[2], box[3]])
         data_list[i] = data_list[i]._replace(bounding_boxes=new_boxes)
     return data_list
+
+
+def invert_transformation(bb_hat, anchors):
+    """
+    Invert the transform from "loc_transformation".
+    """
+
+    return torch.stack([anchors[:, 0] + bb_hat[:, 0] * anchors[:, 2],
+                        anchors[:, 1] + bb_hat[:, 1] * anchors[:, 3],
+                        anchors[:, 2] * torch.exp(bb_hat[:, 2]),
+                        anchors[:, 3] * torch.exp(bb_hat[:, 3])
+                        ], dim=1)

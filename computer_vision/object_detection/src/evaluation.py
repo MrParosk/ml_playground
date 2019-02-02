@@ -1,10 +1,87 @@
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import torch
+import numpy as np
+from src.data_transformer import invert_transformation
 
 
 PredBoundingBox = namedtuple("PredBoundingBox", ["probability", "class_id",
                                                  "classname", "bounding_box"
                                                  ])
+
+
+class MAP:
+    def __init__(self, model, jaccard_threshold, anchors):
+        self.jaccard_threshold = jaccard_threshold
+        self.model = model
+        self.eps = np.finfo(np.float32).eps
+        self.anchors = anchors
+
+    @staticmethod
+    def voc_ap(rec, prec):
+        """Compute VOC AP given precision and recall with the VOC-07 11-point method."""
+
+        ap = 0.0
+        for t in np.arange(0.0, 1.1, 0.1):
+            if np.sum(rec >= t) == 0:
+                p = 0.0
+            else:
+                p = np.max(prec[rec >= t])
+            ap = ap + p / 11.0
+        return ap
+
+    def __call__(self, dataset, num_samples):
+        self.model.eval()
+        aps = defaultdict(list)
+
+        for i in range(num_samples):
+            (x, bb_true, class_true) = dataset[i]
+            img_file = dataset.file_list[i]
+            class_true = class_true.squeeze(0) - 1 # -1 to convert it from 1-21 to 0-20
+
+            x = x[None, :, :, :]
+            class_hat, bb_hat = self.model(x)
+            class_hat = class_hat[0, :, 1:].sigmoid()
+
+            bb_hat = invert_transformation(bb_hat.squeeze(0), self.anchors)
+            jacard_values = jaccard(bb_hat.squeeze(0), bb_true.squeeze(0))
+
+            for j in range(len(class_true)):
+                overlap = (jacard_values[:, j] > self.jaccard_threshold).nonzero()
+                class_true_j = int(class_true[j].detach().cpu().numpy())
+
+                if len(overlap) > 0:
+                    class_hat = class_hat[overlap[:,0], :]
+                    prob, class_id = class_hat.max(1)
+                    prob, sort_index = prob.sort(descending=True)
+                    class_id = class_id[sort_index].detach().cpu().numpy()
+
+                    tp = np.zeros_like(class_id)
+                    fp = np.zeros_like(class_id)
+
+                    found = False
+                    for d in range(len(class_id)):
+                        if found or class_id[d] != class_true[j]:
+                            fp[d] = 1.0
+                        else:
+                            tp[d] = 1.0
+                            found = True
+
+                    fp = np.cumsum(fp)
+                    tp = np.cumsum(tp)
+
+                    rec = tp
+                    prec = tp / np.maximum(tp + fp, self.eps)
+
+                    temp_ap = MAP.voc_ap(rec, prec)
+                    aps[class_true_j].append(temp_ap)
+                else:
+                    aps[class_true_j].append(0)
+
+        res_list = []
+        for _, list_value in aps.items():
+            res_list.append(sum(list_value) / len(list_value))
+
+        return res_list, sum(res_list) / len(res_list)
 
 
 def center_2_hw(box: torch.Tensor) -> float:
