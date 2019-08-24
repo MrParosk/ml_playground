@@ -21,6 +21,8 @@
   - Implementing FCN-8 and U-Net.
 - Neural style transfer
   - Implementing a neural algorithm for artistic style.
+- Generative models
+  - Implementing DCGAN and Wasserstein GAN.
 
 ### Natural language processing
 

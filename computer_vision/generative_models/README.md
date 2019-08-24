@@ -5,4 +5,4 @@ Implementation of common deep generative models (for images). They are tested on
 The models are:
 
 - [DCGAN](https://arxiv.org/abs/1511.06434) 
-- [Wasserstein GAN]https://arxiv.org/abs/1701.07875)
+- [Wasserstein GAN](https://arxiv.org/abs/1701.07875)
