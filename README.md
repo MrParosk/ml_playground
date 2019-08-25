@@ -5,11 +5,6 @@
 
 ## Structure
 
-### Additional
-
-  - Collaborative filtering
-    - Implementing collaborative filtering in PyTorch.
-
 ### Computer vision
 
 - Image classification
@@ -33,3 +28,8 @@
   - Synthesis text (character level).
 - word2vec
   - Implementing word2vec.
+
+### Additional
+
+  - Collaborative filtering
+    - Implementing collaborative filtering in PyTorch.
