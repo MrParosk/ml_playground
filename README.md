@@ -5,9 +5,10 @@
 
 ## Structure
 
-### Collaborative filtering
+### Additional
 
-- Implementing collaborative filtering in PyTorch.
+  - Collaborative filtering
+    - Implementing collaborative filtering in PyTorch.
 
 ### Computer vision
 
