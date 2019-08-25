@@ -22,7 +22,7 @@
 - Neural style transfer
   - Implementing a neural algorithm for artistic style.
 - Generative models
-  - Implementing DCGAN and Wasserstein GAN.
+  - Implementing DCGAN, Wasserstein GAN and VAE.
 
 ### Natural language processing
 
