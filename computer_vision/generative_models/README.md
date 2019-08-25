@@ -7,3 +7,4 @@ The models are:
 - [DCGAN](https://arxiv.org/abs/1511.06434) 
 - [Wasserstein GAN](https://arxiv.org/abs/1701.07875)
 - [VAE](https://arxiv.org/abs/1312.6114)
+- [Conditional VAE](https://papers.nips.cc/paper/5775-learning-structured-output-representation-using-deep-conditional-generative-models)
