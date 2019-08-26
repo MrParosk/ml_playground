@@ -28,6 +28,8 @@
   - Synthesis text (character level).
 - word2vec
   - Implementing word2vec.
+- Speech classification
+  - Classifying speech commands.
 
 ### Additional
 
