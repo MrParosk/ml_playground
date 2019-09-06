@@ -33,5 +33,7 @@
 
 ### Additional
 
-  - Collaborative filtering
-    - Implementing collaborative filtering in PyTorch.
+- Collaborative filtering
+  - Implementing collaborative filtering.
+- Entity embedding
+  - Implementing entity embeddings.
