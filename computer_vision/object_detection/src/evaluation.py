@@ -10,11 +10,12 @@ PredBoundingBox = namedtuple("PredBoundingBox", ["probability", "class_id",
 
 
 class MAP:
-    def __init__(self, model, jaccard_threshold, anchors):
+    def __init__(self, model, dataset, jaccard_threshold, anchors):
         self.jaccard_threshold = jaccard_threshold
         self.model = model
         self.eps = np.finfo(np.float32).eps
         self.anchors = anchors
+        self.dataset = dataset
 
     @staticmethod
     def voc_ap(rec, prec):
@@ -29,13 +30,12 @@ class MAP:
             ap = ap + p / 11.0
         return ap
 
-    def __call__(self, dataset, num_samples):
+    def __call__(self, ):
         self.model.eval()
         aps = defaultdict(list)
 
-        for i in range(num_samples):
-            (x, bb_true, class_true) = dataset[i]
-            img_file = dataset.file_list[i]
+        for i in range(len(self.dataset)):
+            (x, bb_true, class_true) = self.dataset[i]
             class_true = class_true.squeeze(0) - 1 # -1 to convert it from 1-21 to 0-20
 
             x = x[None, :, :, :]
@@ -50,9 +50,9 @@ class MAP:
                 class_true_j = int(class_true[j].detach().cpu().numpy())
 
                 if len(overlap) > 0:
-                    class_hat = class_hat[overlap[:,0], :]
-                    prob, class_id = class_hat.max(1)
-                    prob, sort_index = prob.sort(descending=True)
+                    class_hat_j = class_hat[overlap[:,0], :]
+                    prob, class_id = class_hat_j.max(1)
+                    prob, sort_index = torch.sort(prob, descending=True)
                     class_id = class_id[sort_index].detach().cpu().numpy()
 
                     tp = np.zeros_like(class_id)
