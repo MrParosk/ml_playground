@@ -37,3 +37,5 @@
   - Implementing collaborative filtering.
 - Entity embedding
   - Implementing entity embeddings.
+- Quantization
+  - Quantize a cnn model.
