@@ -1,7 +1,7 @@
 # Machine learning playground
 
 - Collection of projects used for learning new concepts.
-- Most models are implemented in PyTorch.
+- The models are implemented in PyTorch.
 
 ## Structure
 
