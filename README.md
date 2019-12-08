@@ -23,7 +23,7 @@
 ### Natural language processing
 
 - Sentiment analysis
-  - Doing sentiment analysis on Amazon reviews.
+  - Doing sentiment analysis using different pre-trained methods: word-embeddings, BERT.
 - Text synthesis
   - Synthesis text (character level).
 - word2vec
