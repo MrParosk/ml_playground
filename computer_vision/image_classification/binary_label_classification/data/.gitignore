@@ -1,5 +1,2 @@
-models
-test
-tmp
-train
-val
+chest-xray-pneumonia.zip
+chest-xray-pneumonia/
