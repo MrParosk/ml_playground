@@ -39,3 +39,5 @@
   - Implementing entity embeddings.
 - Quantization
   - Quantize a cnn model.
+- Pruning
+  - Pruning a cnn model.
