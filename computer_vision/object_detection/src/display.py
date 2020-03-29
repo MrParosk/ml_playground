@@ -2,14 +2,14 @@ import cv2
 import numpy as np
 
 
-def read_img(img_str: str, target_size: int) -> np.ndarray:
+def read_img(img_str, target_size):
     img = cv2.imread(img_str, cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (target_size, target_size))
     return img
 
 
-def draw_boxes(img: str, boxes: list) -> np.ndarray:
+def draw_boxes(img, boxes):
     for box in boxes:
         cv2.rectangle(img, (int(box[0] - box[2]/2), int(box[1] - box[3]/2)),
                       (int(box[0] + box[2]/2), int(box[1] + box[3]/2)),
@@ -18,7 +18,7 @@ def draw_boxes(img: str, boxes: list) -> np.ndarray:
     return img
 
 
-def draw_grid(img: str, pixel_step: int) -> np.ndarray:
+def draw_grid(img, pixel_step):
     x = pixel_step
     y = pixel_step
 
@@ -33,7 +33,7 @@ def draw_grid(img: str, pixel_step: int) -> np.ndarray:
     return img
 
 
-def draw_text(img: str, texts: list, locations: list) -> np.ndarray:
+def draw_text(img, texts, locations):
     for text, loc in zip(texts, locations):
         cv2.putText(img, text, (int(loc[0]), int(loc[1])), cv2.FONT_HERSHEY_COMPLEX,
                     0.5, (255, 0, 0), 1)

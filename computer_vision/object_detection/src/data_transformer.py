@@ -9,45 +9,33 @@ ImageEntry = namedtuple("ImageEntry", ["filename", "width", "height",
                                        ])
 
 
-def load_pascal(json_path: str) -> (dict, tuple):
-    """
-    Loading pascal bounding boxes and converting them to named tuples.
-    """
-
+def load_pascal(json_path):
     json_data = json.load(open(json_path))
 
-    cats = json_data["categories"]
-    id_cat = []
+    images_df = pd.DataFrame(json_data["images"])
+    anno_df = pd.DataFrame(json_data["annotations"])
 
-    for c in cats:
-        id_cat.append([c["id"], c["name"]])
+    anno_df = anno_df[["image_id", "bbox", "category_id"]]
+    anno_df = anno_df.rename(columns={"image_id": "id"})
 
-    df_cats = pd.DataFrame(id_cat, columns=["category_id", "name"])
+    id_classname = {}
+    for row in json_data["categories"]:
+        id_classname[row["id"]] = row["name"]
 
-    id_cat = {value-1: key for (value, key) in id_cat}
-
-    df_filename = pd.DataFrame(json_data["images"])
-    df_filename.columns = ["file_name", "height", "image_id", "width"]
-
-    df_bbox = pd.DataFrame(json_data["annotations"])
-
-    df = df_filename.merge(df_bbox, on="image_id")
-    df = df[df["ignore"] == 0]
-    df = df.drop(["area", "ignore", "iscrowd", "segmentation", "image_id"], axis=1)
-    df = df.merge(df_cats, on="category_id")
+    anno_df["classname"] = anno_df.apply(lambda x: id_classname[x["category_id"]], axis=1)
+    df = anno_df.merge(images_df, on="id")
 
     grouped_data = []
-
     grouped = df.groupby("file_name")
     for name, group in grouped:
         val = ImageEntry(filename=name, width=group["width"].values[0], height=group["height"].values[0],
-                         classnames=list(group["name"].values), class_id=list(group["category_id"].values - 1),
+                         classnames=list(group["classname"].values), class_id=list(group["category_id"].values - 1),
                          bounding_boxes=list(group["bbox"].values))
         grouped_data.append(val)
-    return (id_cat, grouped_data)
+    return id_classname, grouped_data
 
 
-def rescale_bounding_boxes(data_list: list, target_size: int) -> list:
+def rescale_bounding_boxes(data_list, target_size):
     """
     Rescaling the bounding boxes according to the new image size (target_size).
     """
@@ -72,7 +60,7 @@ def rescale_bounding_boxes(data_list: list, target_size: int) -> list:
     return data_list
 
 
-def convert_to_center(data_list: list) -> list:
+def convert_to_center(data_list):
     """
     Converting [bx, by, w, h] to [cx, cy, w, h].
     """

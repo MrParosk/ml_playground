@@ -30,7 +30,7 @@ class MAP:
             ap = ap + p / 11.0
         return ap
 
-    def __call__(self, ):
+    def __call__(self):
         self.model.eval()
         aps = defaultdict(list)
 
