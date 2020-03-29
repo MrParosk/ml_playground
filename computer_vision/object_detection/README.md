@@ -13,5 +13,3 @@ The notebooks uses json annotations and therefore the xml-files needs to be conv
 ```bash
 python src/xml2json.py ./data/VOCdevkit 2012
 ```
-
-The json-files can  be found in ./data/VOCdevkit/VOC2012/cocoformatJson/.
