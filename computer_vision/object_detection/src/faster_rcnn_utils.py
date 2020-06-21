@@ -80,13 +80,13 @@ def bbox2loc(src_bbox, dst_bbox, eps=1e-6, device="cuda"):
     dh = torch.log(base_height / height)
     dw = torch.log(base_width / width) 
 
-    locs = torch.stack((dy, dx, dh, dw), dim=1)
+    locs = torch.stack((dx, dy, dw, dh), dim=1)
     return locs
 
 
 def random_choice(arr, size, device="cuda"):
-    idx = torch.randperm(len(arr), device=device)[0:size]
-    return arr[idx]
+    idx = torch.randperm(len(arr), device=device)
+    return arr[idx][0:size]
 
 
 def normal_init(module, mean, stddev):

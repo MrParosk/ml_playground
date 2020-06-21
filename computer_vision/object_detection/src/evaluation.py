@@ -84,22 +84,22 @@ class MAP:
         return res_list, sum(res_list) / len(res_list)
 
 
-def center_2_hw(box: torch.Tensor) -> float:
+def center_to_minmax(box: torch.Tensor) -> float:
     """
     Converting (cx, cy, w, h) to (x1, y1, x2, y2)
     """
 
-    return torch.cat(
-        [box[:, 0, None] - box[:, 2, None]/2,
-         box[:, 1, None] - box[:, 3, None]/2,
-         box[:, 0, None] + box[:, 2, None]/2,
-         box[:, 1, None] + box[:, 3, None]/2
-         ], dim=1)
+    xmin = box[:, 0] - 0.5 * box[:, 2]
+    xmax = box[:, 0] + 0.5 * box[:, 2]
+
+    ymin = box[:, 1] - 0.5 * box[:, 3]
+    ymax = box[:, 1] + 0.5 * box[:, 3]
+    return torch.stack([xmin, ymin, xmax, ymax], dim=1)
 
 
 def intersect(box_a: torch.Tensor, box_b: torch.Tensor) -> float:
     # Coverting (cx, cy, w, h) to (x1, y1, x2, y2) since its easier to extract min/max coordinates
-    temp_box_a, temp_box_b = center_2_hw(box_a), center_2_hw(box_b)
+    temp_box_a, temp_box_b = center_to_minmax(box_a), center_to_minmax(box_b)
 
     max_xy = torch.min(temp_box_a[:, None, 2:], temp_box_b[None, :, 2:])
     min_xy = torch.max(temp_box_a[:, None, :2], temp_box_b[None, :, :2])
