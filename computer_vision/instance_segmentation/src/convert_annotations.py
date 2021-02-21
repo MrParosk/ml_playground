@@ -26,7 +26,6 @@ def convert_bboxes_annotations(path):
             "file_name": anno["annotation"]["filename"],
             "seg_file_name": id_ + ".png",
             "id": id_,
-            ""
             "height": anno["annotation"]["size"]["height"],
             "width": anno["annotation"]["size"]["width"],
             "annotations": []
