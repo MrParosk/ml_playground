@@ -2,8 +2,8 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-def plot_boxes(img, boxes, names):
-    color = (0, 255, 0)
+def plot_boxes(img, boxes, names, color=(0, 255, 0)):
+    
     box_tickness = 2
     text_tickness = 1
 

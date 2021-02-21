@@ -6,7 +6,7 @@ import xmltodict
 from classes import classes_idx
 
 
-def convert_annotations(path):
+def convert_bboxes_annotations(path):
     anno_files = glob.glob(os.path.join(path, "Annotations", "*.xml"))
 
     annos = []
@@ -55,7 +55,7 @@ def convert_annotations(path):
 
 if __name__ == "__main__":
     PATH = "data/VOCdevkit/VOC2012"
-    annos = convert_annotations(PATH)
+    annos = convert_bboxes_annotations(PATH)
 
     with open("data/annotations.json", "w") as fp:
         json.dump(annos, fp)
