@@ -67,8 +67,8 @@ def get_boxes_from_segmentation(seg_img):
     return seg_bboxes
 
 
-def connect_bboxes_segmask_func(annotation_dict, seg_img):
-    bboxes = [d["bbox"] for d in annotation_dict]
+def connect_bboxes_segmask_func(bboxes_dict, seg_img):
+    bboxes = [d["bbox"] for d in bboxes_dict]
     seg_bboxes = get_boxes_from_segmentation(seg_img)
 
     if len(bboxes) != len(seg_bboxes):
@@ -88,9 +88,9 @@ def connect_bboxes_segmask_func(annotation_dict, seg_img):
             return {}, False
         found_idx.add(max_idx)
 
-        annotation_dict[i]["seg_mask_id"] = int(seg_bboxes[i]["id"])
+        bboxes_dict[max_idx]["seg_mask_id"] = int(seg_bboxes[i]["id"])
 
-    return annotation_dict, True
+    return bboxes_dict, True
 
 
 def add_segmask_ids(annotation_dicts, path):
@@ -98,6 +98,7 @@ def add_segmask_ids(annotation_dicts, path):
     # between segmentations and bboxes.
     # Therefore we will filter away any example which seems to have incorrect seg-ids and bboxes
 
+    new_annos = []
     num_discard = 0
     for i in range(len(annotation_dicts)):
         seg_file = os.path.join(path, "SegmentationObject", annotation_dicts[i]["seg_file_name"])
@@ -106,10 +107,11 @@ def add_segmask_ids(annotation_dicts, path):
 
         if keep:
             annotation_dicts[i]["annotations"] = anno
+            new_annos.append(annotation_dicts[i])
         else:
             num_discard += 1
 
     discard_rate = num_discard / len(annotation_dicts)
     print(f"Discard-rate: {discard_rate}")
 
-    return annotation_dicts
+    return new_annos
