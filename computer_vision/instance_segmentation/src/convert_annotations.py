@@ -4,6 +4,7 @@ import glob
 import xmltodict
 
 from classes import classes_idx
+from connect_bboxes_segmask import add_segmask_ids
 
 
 def convert_bboxes_annotations(path):
@@ -55,6 +56,7 @@ def convert_bboxes_annotations(path):
 if __name__ == "__main__":
     PATH = "data/VOCdevkit/VOC2012"
     annos = convert_bboxes_annotations(PATH)
+    annos = add_segmask_ids(annos, PATH)
 
     with open("data/annotations.json", "w") as fp:
         json.dump(annos, fp)
