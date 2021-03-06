@@ -55,11 +55,6 @@ def plot_boxes_instance_masks(plot_img, seg_img, bboxes, names, seg_ids, alpha=0
     return plot_img
 
 
-def plot_image(img, convert_format=cv2.COLOR_BGR2RGB):
-    if convert_format:
-        plot_img = cv2.cvtColor(img, convert_format)
-    else:
-        plot_img = img
-
-    plt.imshow(plot_img)
+def plot_image(img):
+    plt.imshow(img)
     plt.show()
