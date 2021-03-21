@@ -1,6 +1,7 @@
 import torch
+import numpy as np
 from .utils import random_choice
-from .box_functions import jaccard
+from .box_functions import jaccard, bbox2loc
 
 
 def sample_labels(labels, n_sample=256, pos_ratio=0.5):
@@ -21,7 +22,7 @@ def sample_labels(labels, n_sample=256, pos_ratio=0.5):
 
 
 def create_anchor_labels(anchors, gt, img_size, pos_iou_threshold=0.7, neg_iou_threshold=0.3,
-                         n_sample=256, pos_ratio=0.5):
+                         n_sample=256, pos_ratio=0.5, device="cuda"):
     index_inside = torch.where((anchors[:, 0] >= 0) &
                                (anchors[:, 1] >= 0) &
                                (anchors[:, 2] <= img_size) &
@@ -59,7 +60,7 @@ def create_anchor_labels(anchors, gt, img_size, pos_iou_threshold=0.7, neg_iou_t
     return anchor_labels, anchor_locations
 
 
-def create_target_labels(rois, gt_boxes, label):
+def create_box_target_labels(rois, gt_boxes, label, device="cuda"):
     n_sample = 128
     pos_ratio = 0.25
     pos_iou_thresh = 0.5
@@ -77,7 +78,7 @@ def create_target_labels(rois, gt_boxes, label):
         gt_assignment = iou.argmax(dim=1)
         max_iou = iou.max(axis=1)[0]
         
-        gt_roi_label = label[gt_assignment]
+        gt_roi_label = label[gt_assignment].long()
 
         pos_index = torch.where(max_iou >= pos_iou_thresh)[0]
         pos_roi_per_this_image = int(min(pos_roi_per_image, len(pos_index)))
