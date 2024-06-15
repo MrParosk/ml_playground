@@ -31,7 +31,7 @@
 - Speech classification
   - Classifying speech commands.
 - Tokenizer
-  - Implementing BPE tokenizer
+  - Implementing BPE tokenizer.
 
 ### Additional
 
@@ -43,3 +43,5 @@
   - Quantize a cnn model.
 - Pruning
   - Pruning a cnn model.
+- Transformers
+  - Implementing a Transformer from scratch.
