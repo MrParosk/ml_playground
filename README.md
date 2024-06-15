@@ -30,6 +30,8 @@
   - Implementing word2vec.
 - Speech classification
   - Classifying speech commands.
+- Tokenizer
+  - Implementing BPE tokenizer
 
 ### Additional
 
