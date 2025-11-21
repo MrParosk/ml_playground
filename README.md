@@ -18,7 +18,7 @@
 - Neural style transfer
   - Implementing a neural algorithm for artistic style.
 - Generative models
-  - Implementing DCGAN, Wasserstein GAN, VAE and Conditional VAE.
+  - Implementing DCGAN, Wasserstein GAN, VAE, Conditional VAE and VQ-VAE.
 
 ### Natural language processing
 
